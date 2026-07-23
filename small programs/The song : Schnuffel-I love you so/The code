@@ -1,0 +1,139 @@
+#include <iostream>
+#include <windows.h>
+#include <mmsystem.h>
+#include <string>
+#include <vector>
+
+#pragma comment(lib, "winmm.lib") 
+
+using namespace std;
+
+struct LyricLine {
+    string text;
+    DWORD showAtMs;
+};
+
+// Set console text color
+void SetColor(int colorCode) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, colorCode);
+}
+
+// Print text with a typewriter effect
+void PrintTypewriter(string text, int speedMs) {
+    for (int i = 0; i < text.length(); i++) {
+        cout << text[i];
+        Sleep(speedMs); 
+    }
+    cout << endl;
+}
+
+int main() {
+    // Note: Update this path to match your local audio file location
+    string filePath = "C:\\Users\\hp\\Music\\Schnuffel-I love you so.wav";
+
+    vector<LyricLine> songLyrics = {
+        {"[Intro]", 7500},
+        {"Do, do, doo-bee-doo-bee", 8500},
+        {"Do, do, doo-bee-doo-bee", 10500},
+        {"Do, do, doo-bee-doo-bee-doo", 12500},
+
+        {"\n[Chorus]", 13500},
+        {"I love you so, I can never let you go", 15500},
+        {"In the whole wide world, you're the one for me", 17500},
+        {"I love you so, I can never let you go", 19500},
+        {"I'll do anything for you, my love is true", 21500},
+
+        {"\n[Post-Chorus]", 41500},
+        {"Do, do, doo-bee-doo-bee", 42500},
+        {"Do, do, doo-bee-doo-bee", 45000},
+        {"Do, do, doo-bee-doo-bee-doo", 47500},
+        {"Do, do, doo-bee-doo-bee", 50000},
+        {"Do, do, doo-bee-doo-bee", 52500},
+        {"Do, do, doo-bee-doo-bee-doo", 55000},
+
+        {"\n[Verse 1]", 57500},
+        {"I catch all clouds for you", 59000},
+        {"So that the sun will always shine", 62000},
+        {"I plea so time and time", 65500},
+        {"That you will write it in the sky", 68500},
+
+        {"\nI will turn back the clocks", 72000},
+        {"So that the time won't fly so fast", 75000},
+        {"Our love will never stop", 78500},
+        {"We'll be together at long last", 81500},
+
+        {"\n[Chorus]", 85000},
+        {"I love you so, I can never let you go", 86500},
+        {"In the whole wide world, you're the one for me", 90500},
+        {"I love you so, I can never let you go", 93500},
+        {"I'll do anything for you, my love is true", 97500},
+
+        {"\n[Post-Chorus]", 113500},
+        {"Do, do, doo-bee-doo-bee", 114500},
+        {"Do, do, doo-bee-doo-bee", 115500},
+        {"Do, do, doo-bee-doo-bee-doo", 116500},
+        {"Do, do, doo-bee-doo-bee", 117500},
+        {"Do, do, doo-bee-doo-bee", 118500},
+        {"Do, do, doo-bee-doo-bee-doo", 119500},
+        {"Do, do, doo-bee-doo-bee", 120500},
+        {"Do, do, doo-bee-doo-bee", 121500},
+        {"Do, do, doo-bee-doo-bee-doo", 122500},
+        {"Do, do, doo-bee-doo-bee", 123500},
+        {"Do, do, doo-bee-doo-bee", 124500},
+        {"Do, do, doo-bee-doo-bee-doo", 125500},
+
+        {"\n[Chorus]", 140000},
+        {"I love you so, I can never let you go", 140500},
+        {"In the whole wide world, you're the one for me", 144500},
+        {"I love you so, I can never let you go", 148500},
+        {"I'll do anything for you, my love is true", 152500},
+
+        {"\n[Post-Chorus]", 185500},
+        {"Do, do, doo-bee-doo-bee", 187500},
+        {"Do, do, doo-bee-doo-bee", 188500},
+        {"Do, do, doo-bee-doo-bee-doo", 189500},
+        {"Do, do, doo-bee-doo-bee", 190500},
+        {"Do, do, doo-bee-doo-bee", 191500},
+        {"Do, do, doo-bee-doo-bee-doo", 192500}
+    };
+
+    SetColor(13); 
+    cout << "=== Starting Professional Karaoke Mode ===" << endl << endl;
+
+    PlaySoundA(filePath.c_str(), NULL, SND_FILENAME | SND_ASYNC);
+    DWORD songStartTime = GetTickCount();
+
+    for (int i = 0; i < songLyrics.size(); i++) {
+        while (true) {
+            DWORD currentTime = GetTickCount();
+            DWORD timePassed = currentTime - songStartTime;
+
+            if (timePassed >= songLyrics[i].showAtMs) {
+                
+                // Highlight section headers
+                if (songLyrics[i].text.find("[") != string::npos) {
+                    SetColor(14); 
+                    cout << songLyrics[i].text << endl;
+                } 
+                // Print lyrics with effect
+                else {
+                    SetColor(11); 
+                    PrintTypewriter(songLyrics[i].text, 30);
+                }
+                
+                break;
+            }
+            Sleep(10);
+        }
+    }
+
+    SetColor(10); 
+    cout << "\n=== Song Finished ===" << endl;
+    cout << "Press any key to exit." << endl;
+
+    SetColor(15); 
+    system("pause");
+
+    return 0;
+}
