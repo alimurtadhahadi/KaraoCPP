@@ -1,0 +1,113 @@
+#include <iostream>
+#include <windows.h>
+#include <mmsystem.h>
+#include <string>
+#include <vector>
+
+#pragma comment(lib, "winmm.lib") 
+
+using namespace std;
+
+struct LyricLine {
+    string text;
+    DWORD showAtMs;
+};
+
+// Set console text color
+void SetColor(int colorCode) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, colorCode);
+}
+
+// Print text with a typewriter effect
+void PrintTypewriter(string text, int speedMs) {
+    for (int i = 0; i < text.length(); i++) {
+        cout << text[i];
+        Sleep(speedMs);
+    }
+    cout << endl;
+}
+
+int main() {
+    // Note: Update this path if your audio file is located elsewhere
+    string filePath = "C:\\Users\\hp\\Music\\sapientdream - Past Lives (Lyrics).wav";
+
+    // Absolute timings ALL shifted by +2000ms based on the first line (7000)
+    vector<LyricLine> songLyrics = {
+
+        {"[Verse 1]", 7000},
+        {"Past lives couldn't ever come between us", 8000},
+        {"Lost love is sweeter when it's finally found", 12000},
+        {"I've got the strangest feeling", 16000},
+        {"This isn't our first time around", 20000},
+
+        {"\n[Chorus 1]", 24000},
+        {"Past lives couldn't ever come between us", 25000},
+        {"Sometimes the dreamers finally wake up", 29000},
+        {"Don't wake me, I'm not dreaming", 33000},
+        {"Don't wake me, I'm not dreaming", 37000},
+
+        {"\n[Verse 2]", 42000},
+        {"Past lives couldn't ever hold me down", 43000},
+        {"Lost love is sweeter when it's finally found", 47000},
+        {"I've got the strangest feeling", 51000},
+        {"This isn't our first time around", 55000},
+
+        {"\n[Chorus 2]", 59000},
+        {"Past lives couldn't ever come between us", 60000},
+        {"Sometimes the dreamers finally wake up", 64000},
+        {"Don't wake me, I'm not dreaming", 68000},
+        {"Don't wake me, I'm not dreaming", 72000},
+
+        {"\n[Verse 3]", 77000},
+        {"Past lives couldn't ever hold me down", 78000},
+        {"Lost love is sweeter when it's finally found", 82000},
+        {"I've got the strangest feeling", 86000},
+        {"This isn't our first time around", 90000},
+
+        {"\n[Chorus 3]", 94000},
+        {"Past lives couldn't ever come between us", 95000},
+        {"Sometimes the dreamers finally wake up", 99000},
+        {"Don't wake me, I'm not dreaming", 103000},
+        {"Don't wake me, I'm not dreaming", 107000}
+    };
+
+    SetColor(13);
+    cout << "=== Starting Professional Karaoke Mode ===" << endl << endl;
+
+    PlaySoundA(filePath.c_str(), NULL, SND_FILENAME | SND_ASYNC);
+    DWORD songStartTime = GetTickCount();
+
+    for (int i = 0; i < songLyrics.size(); i++) {
+        while (true) {
+            DWORD currentTime = GetTickCount();
+            DWORD timePassed = currentTime - songStartTime;
+
+            if (timePassed >= songLyrics[i].showAtMs) {
+
+                // Highlight section headers
+                if (songLyrics[i].text.find("[") != string::npos) {
+                    SetColor(14);
+                    cout << songLyrics[i].text << endl;
+                }
+                // Print lyrics with effect
+                else {
+                    SetColor(11);
+                    PrintTypewriter(songLyrics[i].text, 30);
+                }
+
+                break;
+            }
+            Sleep(10);
+        }
+    }
+
+    SetColor(10);
+    cout << "\n=== Song Finished ===" << endl;
+    cout << "Press any key to exit." << endl;
+
+    SetColor(15);
+    system("pause");
+
+    return 0;
+}
