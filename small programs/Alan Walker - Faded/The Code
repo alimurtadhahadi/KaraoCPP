@@ -1,0 +1,143 @@
+#include <iostream>
+#include <windows.h>
+#include <mmsystem.h>
+#include <string>
+#include <vector>
+
+#pragma comment(lib, "winmm.lib") 
+
+using namespace std;
+
+struct LyricLine {
+    string text;
+    DWORD showAtMs;
+};
+
+// Set console text color
+void SetColor(int colorCode) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, colorCode);
+}
+
+// Print text with a typewriter effect
+void PrintTypewriter(string text, int speedMs) {
+    for (int i = 0; i < text.length(); i++) {
+        cout << text[i];
+        Sleep(speedMs);
+    }
+    cout << endl;
+}
+
+int main() {
+    // Note: Update this path to where your .wav file is located
+    string filePath = "C:\\Users\\hp\\Music\\Alan Walker - Faded.wav";
+
+    // Adjusted for the Short Version (Radio Edit) - 3 seconds gap before Verse 2
+    vector<LyricLine> songLyrics = {
+
+        // --- Verse 1 ---
+        {"[Verse 1]", 5000},
+        {"You were the shadow to my light", 6000},
+        {"Did you feel us?", 10000},
+        {"Another star", 13000},
+        {"You fade away", 16500},
+
+        {"\nAfraid our aim is out of sight", 20500},
+        {"Wanna see us", 24000},
+        {"Alight", 28000},
+
+        // --- Pre-Chorus ---
+        {"\n[Pre-Chorus]", 30500},
+        {"Where are you now?", 31500},
+        {"Where are you now?", 35000},
+        {"Where are you now?", 38500},
+        {"Was it all in my fantasy?", 42000},
+        {"Where are you now?", 45500},
+        {"Were you only imaginary?", 49500},
+
+        // --- Chorus 1 ---
+        {"\n[Chorus]", 53500},
+        {"Where are you now?", 54000},
+        {"Atlantis", 56500},
+        {"Under the sea", 58500},
+        {"Under the sea", 60500},
+        {"Where are you now?", 62000},
+        {"Another dream", 65000},
+        {"The monster's running wild inside of me", 67500},
+        {"I'm faded", 72000},
+        {"I'm faded", 76000},
+        {"So lost, I'm faded", 79500},
+        {"I'm faded", 84000},
+        {"So lost, I'm faded", 88000}, // Ends at 88 seconds
+
+        // --- Verse 2 (Starts exactly 3 seconds after the last "I'm faded") ---
+        {"\n[Verse 2]", 89500}, // Title shows at 89.5 seconds
+        {"These shallow waters never met what I needed", 91000}, // Starts exactly at 91 seconds!
+        {"I'm letting go a deeper dive", 97500},
+        {"Eternal silence of the sea, I'm breathing", 105500},
+        {"Alive", 112500},
+
+        // --- Pre-Chorus ---
+        {"\n[Pre-Chorus]", 116500},
+        {"Where are you now?", 117500},
+        {"Where are you now?", 121500},
+        {"Under the bright but faded lights", 124500},
+        {"You've set my heart on fire", 128500},
+        {"Where are you now?", 131500},
+        {"Where are you now?", 135500},
+
+        // --- Chorus 2 ---
+        {"\n[Chorus]", 143500},
+        {"Where are you now?", 144500},
+        {"Atlantis", 147500},
+        {"Under the sea", 149500},
+        {"Under the sea", 151500},
+        {"Where are you now?", 153000},
+        {"Another dream", 156000},
+        {"The monster's running wild inside of me", 158500},
+        {"I'm faded", 163500},
+        {"I'm faded", 167500},
+        {"So lost, I'm faded", 171500},
+        {"I'm faded", 175500},
+        {"So lost, I'm faded", 179500}
+    };
+
+    SetColor(13);
+    cout << "=== Starting Professional Karaoke Mode ===" << endl << endl;
+
+    PlaySoundA(filePath.c_str(), NULL, SND_FILENAME | SND_ASYNC);
+    DWORD songStartTime = GetTickCount();
+
+    for (int i = 0; i < songLyrics.size(); i++) {
+        while (true) {
+            DWORD currentTime = GetTickCount();
+            DWORD timePassed = currentTime - songStartTime;
+
+            if (timePassed >= songLyrics[i].showAtMs) {
+
+                // Highlight section headers
+                if (songLyrics[i].text.find("[") != string::npos) {
+                    SetColor(14);
+                    cout << songLyrics[i].text << endl;
+                }
+                // Print lyrics with effect
+                else {
+                    SetColor(11);
+                    PrintTypewriter(songLyrics[i].text, 20);
+                }
+
+                break;
+            }
+            Sleep(10);
+        }
+    }
+
+    SetColor(10);
+    cout << "\n=== Song Finished ===" << endl;
+    cout << "Press any key to exit." << endl;
+
+    SetColor(15);
+    system("pause");
+
+    return 0;
+}
